@@ -25,7 +25,9 @@ routes.delete('/:id', (req, res) => {
         conn.query('SELECT * FROM record WHERE idrecord = ?', [req.params.id], (err, rows) => {
             if (err) return res.send(err)
             if (rows == "") {
-                res.send('record not found')
+                res.status(404).json({
+                    error: "record not found"
+                })
             } else {
                 conn.query('DELETE FROM record WHERE idrecord = ?', [req.params.id], (err, rows) => {
                     if (err) return res.send(err)
@@ -41,7 +43,9 @@ routes.put('/:id', (req, res) => {
         conn.query('SELECT * FROM record WHERE idrecord = ?', [req.params.id], (err, rows) => {
             if (err) return res.send(err)
             if (rows == "") {
-                res.send('record not found')
+                res.status(404).json({
+                    error: "record not found"
+                })
             } else {
                 conn.query('UPDATE record SET ? WHERE idrecord = ?', [req.body, req.params.id], (err, rows) => {
                     if (err) return res.send(err)

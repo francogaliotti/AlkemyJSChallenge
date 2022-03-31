@@ -1,7 +1,7 @@
 const express = require('express');
 const mysql = require('mysql');
 const myconnection = require('express-myconnection');
-const routes = require('./routes')
+const recordRoutes = require('./routes/record')
 const app = express();
 const dbOptions = {
     host: 'localhost',
@@ -22,7 +22,7 @@ app.use(express.json())
 app.get('/', (req, res) => {
     res.send('Welcome to my API')
 })
-app.use('/api',routes);
+app.use('/api/record', recordRoutes);
 
 //start server
 app.listen(app.get('port'),() => {
