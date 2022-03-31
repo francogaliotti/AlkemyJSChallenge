@@ -13,7 +13,7 @@ routes.get('/', (req, res) => {
 routes.post('/', (req, res) => {
     req.getConnection((err, conn) => {
         if (err) return res.send(err)
-        conn.query('INSERT INTO record SET ?',[req.body], (err, rows) => {
+        conn.query('INSERT INTO record SET ?', [req.body], (err, rows) => {
             if (err) return res.send(err)
             res.send('record uploaded')
         })
@@ -22,18 +22,32 @@ routes.post('/', (req, res) => {
 routes.delete('/:id', (req, res) => {
     req.getConnection((err, conn) => {
         if (err) return res.send(err)
-        conn.query('DELETE FROM record WHERE idrecord = ?',[req.params.id], (err, rows) => {
+        conn.query('SELECT * FROM record WHERE idrecord = ?', [req.params.id], (err, rows) => {
             if (err) return res.send(err)
-            res.send('record deleted')
+            if (rows == "") {
+                res.send('record not found')
+            } else {
+                conn.query('DELETE FROM record WHERE idrecord = ?', [req.params.id], (err, rows) => {
+                    if (err) return res.send(err)
+                    res.send('record deleted')
+                })
+            }
         })
     })
 })
 routes.put('/:id', (req, res) => {
     req.getConnection((err, conn) => {
         if (err) return res.send(err)
-        conn.query('UPDATE record SET ? WHERE idrecord = ?',[req.body, req.params.id], (err, rows) => {
+        conn.query('SELECT * FROM record WHERE idrecord = ?', [req.params.id], (err, rows) => {
             if (err) return res.send(err)
-            res.send('record updated')
+            if (rows == "") {
+                res.send('record not found')
+            } else {
+                conn.query('UPDATE record SET ? WHERE idrecord = ?', [req.body, req.params.id], (err, rows) => {
+                    if (err) return res.send(err)
+                    res.send('record updated')
+                })
+            }
         })
     })
 })
