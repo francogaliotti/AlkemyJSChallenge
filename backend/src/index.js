@@ -1,7 +1,7 @@
 const express = require('express');
 const mysql = require('mysql');
 const myconnection = require('express-myconnection');
-const recordRoutes = require('./routes/record')
+const recordRoutes = require('./routes/recordRoutes')
 const app = express();
 const dbOptions = {
     host: 'localhost',

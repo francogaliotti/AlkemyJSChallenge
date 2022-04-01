@@ -1,7 +1,4 @@
-const express = require('express');
-const routes = express.Router();
-
-routes.get('/', (req, res) => {
+const getAllRecords = (req, res) => {
     req.getConnection((err, conn) => {
         if (err) return res.send(err)
         conn.query('SELECT * FROM record', (err, rows) => {
@@ -9,17 +6,23 @@ routes.get('/', (req, res) => {
             res.json(rows)
         })
     })
-})
-routes.post('/', (req, res) => {
+}
+const createRecord = (req, res) => {
     req.getConnection((err, conn) => {
         if (err) return res.send(err)
-        conn.query('INSERT INTO record SET ?', [req.body], (err, rows) => {
-            if (err) return res.send(err)
-            res.send('record uploaded')
-        })
+        if (req.body.amount < 0) {
+            res.status(400).json({
+                error: 'the amount cannot be negative'
+            })
+        } else {
+            conn.query('INSERT INTO record SET ?', [req.body], (err, rows) => {
+                if (err) return res.send(err)
+                res.send('record uploaded')
+            })
+        }
     })
-})
-routes.delete('/:id', (req, res) => {
+}
+const deleteRecord = (req, res) => {
     req.getConnection((err, conn) => {
         if (err) return res.send(err)
         conn.query('SELECT * FROM record WHERE idrecord = ?', [req.params.id], (err, rows) => {
@@ -36,8 +39,8 @@ routes.delete('/:id', (req, res) => {
             }
         })
     })
-})
-routes.put('/:id', (req, res) => {
+}
+const updateRecord = (req, res) => {
     req.getConnection((err, conn) => {
         if (err) return res.send(err)
         conn.query('SELECT * FROM record WHERE idrecord = ?', [req.params.id], (err, rows) => {
@@ -45,6 +48,11 @@ routes.put('/:id', (req, res) => {
             if (rows == "") {
                 res.status(404).json({
                     error: "record not found"
+                })
+            } 
+            else if (req.body.amount < 0) {
+                res.status(400).json({
+                    error: 'the amount cannot be negative'
                 })
             } else {
                 conn.query('UPDATE record SET ? WHERE idrecord = ?', [req.body, req.params.id], (err, rows) => {
@@ -54,5 +62,10 @@ routes.put('/:id', (req, res) => {
             }
         })
     })
-})
-module.exports = routes;
+}
+module.exports = {
+    getAllRecords,
+    createRecord,
+    updateRecord,
+    deleteRecord
+}
